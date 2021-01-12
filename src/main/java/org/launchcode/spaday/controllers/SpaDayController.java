@@ -1,6 +1,7 @@
 package org.launchcode.spaday.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.launchcode.spaday.models.SpaForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -51,15 +52,15 @@ public class SpaDayController {
                 "<input type = 'text' name = 'name'>" +
                 "<br>Skin type: <br>" +
                 "<select name = 'skintype'>" +
-                "<option value = 'oily'>Oily</option>" +
-                "<option value = 'combination'>Combination</option>" +
-                "<option value = 'normal'>Normal</option>" +
-                "<option value = 'dry'>Dry</option>" +
+                "<option value = 'Oily'>Oily</option>" +
+                "<option value = 'Combination'>Combination</option>" +
+                "<option value = 'Normal'>Normal</option>" +
+                "<option value = 'Dry'>Dry</option>" +
                 "</select><br>" +
                 "Manicure or Pedicure? <br>" +
-                "<select name = 'manipedi'>" +
-                "<option value = 'manicure'>Manicure</option>" +
-                "<option value = 'pedicure'>Pedicure</option>" +
+                "<select name = 'Manipedi'>" +
+                "<option value = 'Manicure'>Manicure</option>" +
+                "<option value = 'Pedicure'>Pedicure</option>" +
                 "</select><br>" +
                 "<input type = 'submit' value = 'Submit'>" +
                 "</form>";
@@ -67,8 +68,7 @@ public class SpaDayController {
     }
 
     @PostMapping(value="")
-    public String spaMenu(@RequestParam String name, @RequestParam String skintype, @RequestParam String manipedi, Model model) {
-
+    public String spaMenu(@ModelAttribute SpaForm spaForm, Model model ) {
         ArrayList<String> facials = new ArrayList<String>();
         facials.add("Microdermabrasion");
         facials.add("Hydrofacial");
@@ -77,11 +77,15 @@ public class SpaDayController {
 
         ArrayList<String> appropriateFacials = new ArrayList<String>();
         for (int i = 0; i < facials.size(); i ++) {
-            if (checkSkinType(skintype,facials.get(i))) {
+            if (checkSkinType(spaForm.getSkintype(),facials.get(i))) {
                 appropriateFacials.add(facials.get(i));
             }
         }
 
+        model.addAttribute("appropriateFacials", appropriateFacials);
+        model.addAttribute("manipedi", spaForm.getManipedi());
+        model.addAttribute("skintype", spaForm.getSkintype());
+        model.addAttribute("name", spaForm.getName());
         return "menu";
     }
 }
